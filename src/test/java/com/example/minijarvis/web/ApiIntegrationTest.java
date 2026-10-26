@@ -9,7 +9,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -112,6 +114,14 @@ class ApiIntegrationTest {
     void invalidTokenIsRejected() throws Exception {
         mvc.perform(get("/api/providers").header("Authorization", "Bearer not.a.valid.token"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void corsIsOffByDefault() throws Exception {
+        mvc.perform(options("/api/providers")
+                        .header("Origin", "https://jarvis.example.com")
+                        .header("Access-Control-Request-Method", "GET"))
+                .andExpect(header().doesNotExist("Access-Control-Allow-Origin"));
     }
 
     @Test

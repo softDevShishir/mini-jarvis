@@ -1,5 +1,7 @@
 package com.example.minijarvis.config;
 
+import java.util.List;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -38,11 +40,17 @@ public record JarvisProperties(
         }
     }
 
-    public record Security(String adminUsername, String adminPassword, String jwtSecret, long jwtTtlMinutes) {
+    /** {@code corsAllowedOrigins}: exact browser origins of a separately hosted UI; empty means CORS stays off. */
+    public record Security(String adminUsername, String adminPassword, String jwtSecret, long jwtTtlMinutes,
+            List<String> corsAllowedOrigins) {
+        public Security {
+            corsAllowedOrigins = corsAllowedOrigins == null ? List.of() : List.copyOf(corsAllowedOrigins);
+        }
+
         @Override
         public String toString() {
             return "Security[adminUsername=" + adminUsername + ", adminPassword=***, jwtSecret=***, jwtTtlMinutes="
-                    + jwtTtlMinutes + "]";
+                    + jwtTtlMinutes + ", corsAllowedOrigins=" + corsAllowedOrigins + "]";
         }
     }
 

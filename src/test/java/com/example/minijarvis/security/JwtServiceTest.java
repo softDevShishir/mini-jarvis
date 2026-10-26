@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.Clock;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,7 @@ class JwtServiceTest {
     private static JarvisProperties withSecret(String secret) {
         JarvisProperties base = TestFixtures.properties("claude", "");
         return new JarvisProperties(base.timezone(), base.maxAgentRunsPerDay(), base.ai(),
-                new JarvisProperties.Security("admin", "pw", secret, 60), base.scheduler(), base.telegram(), base.business());
+                new JarvisProperties.Security("admin", "pw", secret, 60, List.of()), base.scheduler(), base.telegram(), base.business());
     }
 
     @Test

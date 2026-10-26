@@ -4,6 +4,13 @@ An **advisory-only**, human-in-the-loop AI agent system for small-business opera
 
 > agent reads business data → an AI model (Claude, Gemini or OpenAI) produces a recommendation → **a human must approve it** → everything is logged.
 
+## Agents
+
+- Built: cash-flow.
+- Coming next: overdue-follow-up, expense-watch, sales-leads, safety-compliance, business-coach.
+- Planned: job-readiness, variations, tools-equipment, quality, marketing, admin, payroll-hours, inventory-reorder, customer-retention.
+- Plain-language details: [AGENTS-OVERVIEW.md](AGENTS-OVERVIEW.md).
+
 ## Advisory-only design
 
 - Agents **never perform actions**. They read data and produce recommendations with status `PENDING`.
@@ -72,6 +79,7 @@ Everything comes from environment variables (see `.env.example`). **Never commit
 | `ADMIN_PASSWORD` | _(empty)_ | Login is disabled until set |
 | `JWT_SECRET` | _(none)_ | **Required, at least 32 bytes.** The app refuses to start otherwise. `openssl rand -base64 48` |
 | `JWT_TTL_MINUTES` | `60` | |
+| `CORS_ALLOWED_ORIGINS` | _(empty)_ | Only for a UI on another domain. Comma-separated **exact** origins, e.g. `https://jarvis.example.com`. Empty = CORS off. Wildcards or paths stop the app from starting |
 | `SCHEDULER_ENABLED` | `false` | Off by default so no API credits are spent |
 | `SCHEDULER_CRON` | `0 0 7 * * MON-FRI` | Spring cron (sec min hour day month weekday), in `APP_TIMEZONE` |
 | `MAX_AGENT_RUNS_PER_DAY` | `20` | Cap on **AI calls** per day across all providers (retries and fallback count). Over the cap → HTTP 429 |
@@ -99,6 +107,14 @@ Run the tests (no Postgres or API keys needed; they use in-memory H2 and mocked 
 ```bash
 mvn test
 ```
+
+## Web UI
+
+A React frontend lives in a separate repository: [mini-jarvis-ui](https://github.com/softdevshishir/mini-jarvis-ui). It covers login, running agents, approving or rejecting recommendations, and the audit log.
+
+- **Development:** run this backend on `http://localhost:8080`, then `npm install && npm run dev` in the UI repo. Vite forwards `/api` to the backend, so no CORS setting is needed.
+- **Production, same domain (recommended):** put a reverse proxy in front that sends `/api/*` to this app and everything else to the UI's `dist/`. No CORS setting is needed.
+- **Production, separate domains:** set `CORS_ALLOWED_ORIGINS` to the UI's exact origin (and build the UI with `VITE_API_BASE_URL` set to this API's origin). Only `GET`/`POST` with the `Authorization`, `Content-Type` and `Accept` headers are allowed, and no cookies. CORS does not replace login: every call still needs a token.
 
 ## curl walkthrough
 

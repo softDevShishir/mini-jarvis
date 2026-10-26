@@ -1,5 +1,6 @@
 package com.example.minijarvis;
 
+import java.util.List;
 import java.util.function.Function;
 
 import com.example.minijarvis.ai.AiProvider;
@@ -28,7 +29,7 @@ public final class TestFixtures {
                         new JarvisProperties.ProviderConfig("claude-key", "claude-model"),
                         new JarvisProperties.ProviderConfig("gemini-key", "gemini-model"),
                         new JarvisProperties.ProviderConfig("openai-key", "openai-model")),
-                new JarvisProperties.Security("admin", "pw", "x".repeat(40), 60),
+                new JarvisProperties.Security("admin", "pw", "x".repeat(40), 60, List.of()),
                 new JarvisProperties.Scheduler(false, "0 0 7 * * *"),
                 new JarvisProperties.Telegram("", "", "http://localhost"),
                 new JarvisProperties.Business("a small test business", "AUD"));

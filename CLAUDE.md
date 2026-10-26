@@ -32,6 +32,8 @@ Approving or rejecting (`RecommendationService`) only changes the status and wri
 
 Security: one admin account from `ADMIN_USERNAME`/`ADMIN_PASSWORD`. `POST /api/auth/login` is the only endpoint that issues tokens; everything else needs a JWT (`JwtAuthenticationFilter`). 401s come from the entry point in `SecurityConfig`; every other error uses the `ApiError` shape from `GlobalExceptionHandler`.
 
+Frontend: the React UI is a separate repo ([mini-jarvis-ui](https://github.com/softdevshishir/mini-jarvis-ui)) whose `src/api/types.ts` mirrors `web/Dtos.java`, `ApiError` and `TokenResponse`, so changing an API shape or path breaks the UI too. In development it reaches the API through the Vite proxy (same origin). CORS is only for a UI on another domain: `CORS_ALLOWED_ORIGINS` (exact origins, `/api/**` only, `GET`/`POST`, no credentials). It is off when empty, and `SecurityConfig.corsSource` refuses wildcards or paths at startup. `CorsTest` covers it.
+
 ## Conventions that aren't obvious
 
 - **Model names live only in config** (`application.yml`, `.env.example`), never in Java.
