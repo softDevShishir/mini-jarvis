@@ -34,6 +34,7 @@ class SecretLeakTest {
     private static final List<String> SECRETS = List.of(
             "sk-ant-TEST-SECRET-claude-key-do-not-leak",
             "TEST-SECRET-gemini-key-do-not-leak",
+            "sk-proj-TEST-SECRET-openai-key-do-not-leak",
             "test-jwt-secret-that-is-definitely-longer-than-32-bytes",
             "test-password");
 
@@ -61,7 +62,8 @@ class SecretLeakTest {
                 .content("{\"username\":\"admin\",\"password\":\"wrong\"}")).andReturn().getResponse().getContentAsString());
         bodies.add(mvc.perform(get("/api/providers")).andReturn().getResponse().getContentAsString());
 
-        assertThat(bodies.get(1)).contains("claude").contains("gemini").doesNotContainIgnoringCase("apiKey");
+        assertThat(bodies.get(1)).contains("claude").contains("gemini").contains("openai")
+                .doesNotContainIgnoringCase("apiKey");
         for (String body : bodies) {
             for (String secret : SECRETS) {
                 assertThat(body).doesNotContain(secret);

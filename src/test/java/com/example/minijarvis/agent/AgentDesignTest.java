@@ -22,7 +22,8 @@ class AgentDesignTest {
     void agentsDependOnlyOnTheProviderAbstraction() {
         for (var ctor : CashFlowAgent.class.getConstructors()) {
             for (Class<?> param : ctor.getParameterTypes()) {
-                assertThat(param.getName()).doesNotStartWith("com.anthropic").doesNotStartWith("com.google.genai");
+                assertThat(param.getName()).doesNotStartWith("com.anthropic").doesNotStartWith("com.google.genai")
+                        .doesNotStartWith("com.openai");
             }
         }
     }

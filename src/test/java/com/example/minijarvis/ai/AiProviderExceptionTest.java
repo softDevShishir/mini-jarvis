@@ -40,6 +40,12 @@ class AiProviderExceptionTest {
     }
 
     @Test
+    void openAiRateLimitMentionsBilling() {
+        assertThat(new AiProviderException("openai", Kind.RATE_LIMITED, 429, null).getMessage())
+                .contains("insufficient_quota");
+    }
+
+    @Test
     void messageDoesNotIncludeSdkDetailsAndExplainsGeminiQuota() {
         var cause = new RuntimeException("raw sdk text with request details");
         var e = new AiProviderException("gemini", Kind.RATE_LIMITED, 429, cause);

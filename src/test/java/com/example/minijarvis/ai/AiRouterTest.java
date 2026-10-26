@@ -112,6 +112,17 @@ class AiRouterTest {
     }
 
     @Test
+    void anyRegisteredProviderCanBeTheFallback() {
+        FakeProvider gemini = FakeProvider.failing("gemini", Kind.TEMPORARY, 503);
+        FakeProvider openai = FakeProvider.answering("openai", "from openai");
+
+        RoutedAiResult result = router("gemini", "openai", gemini, openai).generate(null, "s", "u");
+
+        assertThat(result.providerId()).isEqualTo("openai");
+        assertThat(result.fallbackUsed()).isTrue();
+    }
+
+    @Test
     void temporaryErrorTwiceWithoutFallbackThrows() {
         FakeProvider claude = FakeProvider.failing("claude", Kind.TEMPORARY, 503);
 

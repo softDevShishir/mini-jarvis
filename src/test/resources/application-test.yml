@@ -21,6 +21,9 @@ jarvis:
     gemini:
       api-key: TEST-SECRET-gemini-key-do-not-leak
       model: test-gemini-model
+    openai:
+      api-key: sk-proj-TEST-SECRET-openai-key-do-not-leak
+      model: test-openai-model
   security:
     admin-username: admin
     admin-password: test-password

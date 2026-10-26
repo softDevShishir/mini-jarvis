@@ -35,6 +35,7 @@ import com.example.minijarvis.ai.AiProviderException;
 import com.example.minijarvis.ai.AiResult;
 import com.example.minijarvis.ai.ClaudeProvider;
 import com.example.minijarvis.ai.GeminiProvider;
+import com.example.minijarvis.ai.OpenAiProvider;
 import com.example.minijarvis.audit.AuditEventType;
 import com.example.minijarvis.audit.AuditLogEntry;
 import com.example.minijarvis.audit.AuditLogRepository;
@@ -59,6 +60,7 @@ class ApiIntegrationTest {
 
     @MockitoBean ClaudeProvider claude;
     @MockitoBean GeminiProvider gemini;
+    @MockitoBean OpenAiProvider openai;
     @MockitoBean RecommendationNotifier notifier;
 
     private String token;
@@ -71,6 +73,9 @@ class ApiIntegrationTest {
         when(gemini.id()).thenReturn("gemini");
         when(gemini.model()).thenReturn("test-gemini-model");
         when(gemini.isAvailable()).thenReturn(false);
+        when(openai.id()).thenReturn("openai");
+        when(openai.model()).thenReturn("test-openai-model");
+        when(openai.isAvailable()).thenReturn(true);
         token = login("admin", "test-password");
     }
 
@@ -130,7 +135,8 @@ class ApiIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.defaultProvider").value("claude"))
                 .andExpect(jsonPath("$.providers[?(@.id=='claude')].available").value(true))
-                .andExpect(jsonPath("$.providers[?(@.id=='gemini')].available").value(false));
+                .andExpect(jsonPath("$.providers[?(@.id=='gemini')].available").value(false))
+                .andExpect(jsonPath("$.providers[?(@.id=='openai')].available").value(true));
     }
 
     // ---------- agents ----------
@@ -148,8 +154,9 @@ class ApiIntegrationTest {
         mvc.perform(post("/api/agents/cash-flow/run").param("provider", "gemini").header("Authorization", bearer()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("not available")));
-        mvc.perform(post("/api/agents/cash-flow/run").param("provider", "openai").header("Authorization", bearer()))
-                .andExpect(status().isBadRequest());
+        mvc.perform(post("/api/agents/cash-flow/run").param("provider", "mistral").header("Authorization", bearer()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("Known providers: claude, gemini, openai")));
         assertThat(runs.count()).isEqualTo(runsBefore);
         verify(claude, never()).generate(anyString(), anyString());
     }
@@ -188,6 +195,19 @@ class ApiIntegrationTest {
                 AuditEventType.RECOMMENDATION_CREATED, AuditEventType.RECOMMENDATION_CREATED,
                 AuditEventType.AGENT_RUN_FINISHED);
         verify(notifier).notifyNewRecommendations(any(), any());
+    }
+
+    @Test
+    void providerOverrideRunsTheAgentOnOpenAi() throws Exception {
+        when(openai.generate(anyString(), anyString()))
+                .thenReturn(new AiResult(TestFixtures.VALID_ADVICE, "test-openai-model", 900, 250));
+
+        mvc.perform(post("/api/agents/cash-flow/run").param("provider", "openai").header("Authorization", bearer()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.provider").value("openai"))
+                .andExpect(jsonPath("$.model").value("test-openai-model"))
+                .andExpect(jsonPath("$.recommendations[0].provider").value("openai"));
+        verify(claude, never()).generate(anyString(), anyString());
     }
 
     @Test
@@ -296,13 +316,13 @@ class ApiIntegrationTest {
     @Test
     void approvingDoesNotCallAnyExternalService() throws Exception {
         Recommendation rec = pendingRecommendation();
-        clearInvocations(claude, gemini, notifier);
+        clearInvocations(claude, gemini, openai, notifier);
 
         mvc.perform(post("/api/recommendations/{id}/approve", rec.getId()).header("Authorization", bearer()))
                 .andExpect(status().isOk());
 
         // No AI provider, no notifier: approval is a status change plus an audit row, nothing else.
-        verifyNoInteractions(claude, gemini, notifier);
+        verifyNoInteractions(claude, gemini, openai, notifier);
     }
 
     // ---------- audit log ----------

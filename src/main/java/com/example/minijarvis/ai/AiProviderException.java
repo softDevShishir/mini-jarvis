@@ -48,6 +48,9 @@ public class AiProviderException extends RuntimeException {
         if (kind == Kind.RATE_LIMITED && "gemini".equals(providerId)) {
             base += ". Gemini free-tier quotas are small; this is a quota limit, not a bug";
         }
+        if (kind == Kind.RATE_LIMITED && "openai".equals(providerId)) {
+            base += ". OpenAI also returns 429 when the account has no credit (insufficient_quota); check billing";
+        }
         return base;
     }
 

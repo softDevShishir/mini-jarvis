@@ -23,7 +23,8 @@ public record JarvisProperties(
             int maxOutputTokens,
             int timeoutSeconds,
             ProviderConfig anthropic,
-            ProviderConfig gemini) {
+            ProviderConfig gemini,
+            ProviderConfig openai) {
     }
 
     public record ProviderConfig(String apiKey, String model) {

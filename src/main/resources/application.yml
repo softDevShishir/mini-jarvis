@@ -35,7 +35,7 @@ jarvis:
     provider: ${AI_PROVIDER:claude}
     fallback-provider: ${AI_FALLBACK_PROVIDER:}
     retry-backoff-ms: ${AI_RETRY_BACKOFF_MS:1500}
-    max-output-tokens: ${AI_MAX_OUTPUT_TOKENS:2048}
+    max-output-tokens: ${AI_MAX_OUTPUT_TOKENS:4096}
     timeout-seconds: ${AI_TIMEOUT_SECONDS:60}
     anthropic:
       api-key: ${ANTHROPIC_API_KEY:}
@@ -43,6 +43,9 @@ jarvis:
     gemini:
       api-key: ${GEMINI_API_KEY:}
       model: ${GEMINI_MODEL:gemini-3.5-flash-lite}
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      model: ${OPENAI_MODEL:gpt-6.1-sol}
   security:
     admin-username: ${ADMIN_USERNAME:admin}
     admin-password: ${ADMIN_PASSWORD:}
