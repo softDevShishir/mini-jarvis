@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:minijarvis-${random.uuid};MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password:
+  flyway:
+    enabled: true
+
+jarvis:
+  max-agent-runs-per-day: 1000
+  ai:
+    provider: claude
+    fallback-provider: ""
+    retry-backoff-ms: 0
+    anthropic:
+      api-key: sk-ant-TEST-SECRET-claude-key-do-not-leak
+      model: test-claude-model
+    gemini:
+      api-key: TEST-SECRET-gemini-key-do-not-leak
+      model: test-gemini-model
+  security:
+    admin-username: admin
+    admin-password: test-password
+    jwt-secret: test-jwt-secret-that-is-definitely-longer-than-32-bytes
+  telegram:
+    bot-token: ""
+    chat-id: ""

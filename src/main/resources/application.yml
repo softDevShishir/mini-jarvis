@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: mini-jarvis
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/minijarvis}
+    username: ${DB_USERNAME:minijarvis}
+    password: ${DB_PASSWORD:minijarvis}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+  flyway:
+    enabled: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+
+server:
+  error:
+    include-message: never
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+jarvis:
+  timezone: ${APP_TIMEZONE:Australia/Sydney}
+  max-agent-runs-per-day: ${MAX_AGENT_RUNS_PER_DAY:20}
+  ai:
+    provider: ${AI_PROVIDER:claude}
+    fallback-provider: ${AI_FALLBACK_PROVIDER:}
+    retry-backoff-ms: ${AI_RETRY_BACKOFF_MS:1500}
+    max-output-tokens: ${AI_MAX_OUTPUT_TOKENS:2048}
+    timeout-seconds: ${AI_TIMEOUT_SECONDS:60}
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:}
+      model: ${ANTHROPIC_MODEL:claude-sonnet-5-5}
+    gemini:
+      api-key: ${GEMINI_API_KEY:}
+      model: ${GEMINI_MODEL:gemini-3.5-flash-lite}
+  security:
+    admin-username: ${ADMIN_USERNAME:admin}
+    admin-password: ${ADMIN_PASSWORD:}
+    jwt-secret: ${JWT_SECRET:}
+    jwt-ttl-minutes: ${JWT_TTL_MINUTES:60}
+  scheduler:
+    enabled: ${SCHEDULER_ENABLED:false}
+    cron: ${SCHEDULER_CRON:0 0 7 * * MON-FRI}
+  telegram:
+    bot-token: ${TELEGRAM_BOT_TOKEN:}
+    chat-id: ${TELEGRAM_CHAT_ID:}
+    api-base-url: ${TELEGRAM_API_BASE_URL:https://api.telegram.org}

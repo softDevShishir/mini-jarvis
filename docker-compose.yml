@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: minijarvis
+      POSTGRES_USER: ${DB_USERNAME:-minijarvis}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-minijarvis}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      # Inside compose the database host is the service name, not localhost.
+      DB_URL: jdbc:postgresql://postgres:5432/minijarvis
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:
