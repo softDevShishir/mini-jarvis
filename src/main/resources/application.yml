@@ -27,6 +27,9 @@ management:
 
 jarvis:
   timezone: ${APP_TIMEZONE:Australia/Sydney}
+  business:
+    description: ${BUSINESS_DESCRIPTION:a small trades business}
+    currency: ${BUSINESS_CURRENCY:AUD}
   max-agent-runs-per-day: ${MAX_AGENT_RUNS_PER_DAY:20}
   ai:
     provider: ${AI_PROVIDER:claude}

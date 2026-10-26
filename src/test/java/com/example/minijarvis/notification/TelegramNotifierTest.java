@@ -41,7 +41,7 @@ class TelegramNotifierTest {
     private static JarvisProperties props(String token, String chatId) {
         JarvisProperties base = TestFixtures.properties("claude", "");
         return new JarvisProperties(base.timezone(), base.maxAgentRunsPerDay(), base.ai(), base.security(),
-                base.scheduler(), new JarvisProperties.Telegram(token, chatId, "https://telegram.test"));
+                base.scheduler(), new JarvisProperties.Telegram(token, chatId, "https://telegram.test"), base.business());
     }
 
     @Test

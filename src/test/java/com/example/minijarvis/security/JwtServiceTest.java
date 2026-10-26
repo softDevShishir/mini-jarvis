@@ -15,7 +15,7 @@ class JwtServiceTest {
     private static JarvisProperties withSecret(String secret) {
         JarvisProperties base = TestFixtures.properties("claude", "");
         return new JarvisProperties(base.timezone(), base.maxAgentRunsPerDay(), base.ai(),
-                new JarvisProperties.Security("admin", "pw", secret, 60), base.scheduler(), base.telegram());
+                new JarvisProperties.Security("admin", "pw", secret, 60), base.scheduler(), base.telegram(), base.business());
     }
 
     @Test

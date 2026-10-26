@@ -175,6 +175,7 @@ class ApiIntegrationTest {
         verify(claude).generate(
                 org.mockito.ArgumentMatchers.contains("Use ONLY the data provided. Never invent numbers. Return only valid JSON."),
                 org.mockito.ArgumentMatchers.contains("Coastal Builders Pty Ltd"));
+        verify(claude).generate(anyString(), org.mockito.ArgumentMatchers.contains("for Acme Test Trades Pty Ltd (all amounts in AUD)"));
 
         List<Recommendation> saved = recommendations.findByAgentRunIdOrderByIdAsc(runId);
         assertThat(saved).hasSize(2).allMatch(r -> r.getStatus() == RecommendationStatus.PENDING

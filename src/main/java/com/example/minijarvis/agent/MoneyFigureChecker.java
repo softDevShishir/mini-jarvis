@@ -9,23 +9,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Best-effort hallucination check: finds money figures written as "$1,234.56", "AUD 1234", "$12.5k" and checks each
+ * Best-effort hallucination check: finds money figures written as "$1,234.56", "A$900", "€80", "AUD 1234", "$12.5k" and checks each
  * is close to a figure that was actually in the data given to the model. Figures not found are returned.
  */
 public final class MoneyFigureChecker {
 
-    private static final Pattern MONEY = Pattern.compile(
-            "(?:A?\\$|AUD\\s?)\\s?(\\d{1,3}(?:,\\d{3})+|\\d+)(\\.\\d{1,2})?\\s?([kK])?(?![\\d,])");
+    private static final String AMOUNT = "\\s?(\\d{1,3}(?:,\\d{3})+|\\d+)(\\.\\d{1,2})?\\s?([kK])?(?![\\d,])";
 
     private MoneyFigureChecker() {
     }
 
-    public static List<String> findUnsupported(String text, Collection<BigDecimal> knownFigures) {
+    /**
+     * @param currencyCode ISO code such as "AUD" or "EUR"; amounts prefixed with it, or with a currency symbol
+     *                     (optionally country-prefixed, e.g. "A$", "US$"), are checked
+     */
+    public static List<String> findUnsupported(String text, Collection<BigDecimal> knownFigures, String currencyCode) {
         List<String> unsupported = new ArrayList<>();
         if (text == null) {
             return unsupported;
         }
-        Matcher m = MONEY.matcher(text);
+        Pattern money = Pattern.compile("(?:[A-Z]{0,2}[$€£¥₹]|" + Pattern.quote(currencyCode) + "\\s?)" + AMOUNT);
+        Matcher m = money.matcher(text);
         while (m.find()) {
             BigDecimal value = new BigDecimal(m.group(1).replace(",", "") + (m.group(2) != null ? m.group(2) : ""));
             boolean thousands = m.group(3) != null;

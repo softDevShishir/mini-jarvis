@@ -15,18 +15,24 @@ class MoneyFigureCheckerTest {
     @Test
     void acceptsFiguresFromTheData() {
         assertThat(MoneyFigureChecker.findUnsupported(
-                "Coastal owes $8,940.00; expenses were $40,056 and net was -$34,996.20 (about $40k out).", known))
+                "Coastal owes $8,940.00; expenses were A$40,056 and net was -$34,996.20 (about $40k out).", known, "AUD"))
                 .isEmpty();
     }
 
     @Test
     void flagsInventedFigures() {
-        assertThat(MoneyFigureChecker.findUnsupported("Revenue was $125,000.00 and AUD 777 is missing.", known))
+        assertThat(MoneyFigureChecker.findUnsupported("Revenue was $125,000.00 and AUD 777 is missing.", known, "AUD"))
                 .containsExactly("$125,000.00", "AUD 777");
     }
 
     @Test
     void ignoresNumbersThatAreNotMoney() {
-        assertThat(MoneyFigureChecker.findUnsupported("8 invoices are 30 days overdue.", known)).isEmpty();
+        assertThat(MoneyFigureChecker.findUnsupported("8 invoices are 30 days overdue.", known, "AUD")).isEmpty();
+    }
+
+    @Test
+    void usesTheConfiguredCurrency() {
+        assertThat(MoneyFigureChecker.findUnsupported("EUR 8,940.00 owed, €500 invented, AUD 999 ignored.", known, "EUR"))
+                .containsExactly("€500");
     }
 }

@@ -15,7 +15,7 @@
     <artifactId>mini-jarvis</artifactId>
     <version>0.1.0</version>
     <name>mini-jarvis</name>
-    <description>Advisory-only AI agent demo for a fictional plumbing company</description>
+    <description>Human-in-the-loop, advisory-only AI agents for small-business operations</description>
 
     <properties>
         <java.version>21</java.version>

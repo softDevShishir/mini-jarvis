@@ -29,7 +29,8 @@ public final class TestFixtures {
                         new JarvisProperties.ProviderConfig("gemini-key", "gemini-model")),
                 new JarvisProperties.Security("admin", "pw", "x".repeat(40), 60),
                 new JarvisProperties.Scheduler(false, "0 0 7 * * *"),
-                new JarvisProperties.Telegram("", "", "http://localhost"));
+                new JarvisProperties.Telegram("", "", "http://localhost"),
+                new JarvisProperties.Business("a small test business", "AUD"));
     }
 
     /** Scriptable provider: each call is answered by {@code behaviour.apply(callNumber)} (1-based). */

@@ -15,6 +15,7 @@ import java.util.TreeMap;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import com.example.minijarvis.config.JarvisProperties;
 import com.example.minijarvis.domain.Expense;
 import com.example.minijarvis.domain.ExpenseRepository;
 import com.example.minijarvis.domain.Invoice;
@@ -33,7 +34,7 @@ public class CashFlowAgent implements Agent {
                     + "Return only valid JSON.";
 
     private static final String USER_PROMPT_TEMPLATE = """
-            Here is the current cash-flow data for a small plumbing business (all amounts in AUD):
+            Here is the current cash-flow data for %s (all amounts in %s):
 
             %s
 
@@ -45,7 +46,7 @@ public class CashFlowAgent implements Agent {
                 { "title": "short title", "reason": "why, citing figures from the data", "suggested_action": "what a human could do" }
               ]
             }
-            Give between 1 and 5 recommendations. Write money as $1,234.56 using only figures present in the data.
+            Give between 1 and 5 recommendations. Write money as %s 1,234.56 using only figures present in the data.
             You are advisory only: suggest actions for a human, never claim to have done anything.
             Return only valid JSON.""";
 
@@ -54,14 +55,18 @@ public class CashFlowAgent implements Agent {
     private final StructuredAdvisor advisor;
     private final ObjectMapper objectMapper;
     private final Clock clock;
+    private final String businessDescription;
+    private final String currency;
 
     public CashFlowAgent(InvoiceRepository invoices, ExpenseRepository expenses, StructuredAdvisor advisor,
-            ObjectMapper objectMapper, Clock clock) {
+            ObjectMapper objectMapper, Clock clock, JarvisProperties properties) {
         this.invoices = invoices;
         this.expenses = expenses;
         this.advisor = advisor;
         this.objectMapper = objectMapper;
         this.clock = clock;
+        this.businessDescription = properties.business().description();
+        this.currency = properties.business().currency();
     }
 
     @Override
@@ -73,7 +78,7 @@ public class CashFlowAgent implements Agent {
     @Override
     public AgentResult run(String providerOverride) {
         Snapshot snapshot = collect(LocalDate.now(clock));
-        String userPrompt = USER_PROMPT_TEMPLATE.formatted(toJson(snapshot.data()));
+        String userPrompt = USER_PROMPT_TEMPLATE.formatted(businessDescription, currency, toJson(snapshot.data()), currency);
 
         StructuredAdvisor.Response response = advisor.advise(providerOverride, SYSTEM_PROMPT, userPrompt);
         AdvicePayload payload = response.payload();
@@ -91,8 +96,8 @@ public class CashFlowAgent implements Agent {
                 !notes.isEmpty(), List.copyOf(notes), response.inputTokens(), response.outputTokens());
     }
 
-    private static void checkFigures(String field, String text, Set<BigDecimal> known, List<String> notes) {
-        List<String> unsupported = MoneyFigureChecker.findUnsupported(text, known);
+    private void checkFigures(String field, String text, Set<BigDecimal> known, List<String> notes) {
+        List<String> unsupported = MoneyFigureChecker.findUnsupported(text, known, currency);
         if (!unsupported.isEmpty()) {
             notes.add(field + " mentions figures not found in the source data: " + String.join(", ", unsupported));
         }
@@ -103,7 +108,7 @@ public class CashFlowAgent implements Agent {
         Set<BigDecimal> known = new HashSet<>();
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("as_of", today.toString());
-        data.put("currency", "AUD");
+        data.put("currency", currency);
 
         List<Invoice> overdue = invoices.findOverdue(today);
         List<Map<String, Object>> overdueRows = new ArrayList<>();

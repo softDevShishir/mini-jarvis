@@ -1,5 +1,9 @@
 target/
+# Secrets: every env file (.env, .env.local, .env.prod, prod.env, ...) except the template
 .env
+.env.*
+*.env
+!.env.example
 *.iml
 .idea/
 .vscode/

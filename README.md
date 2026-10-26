@@ -1,6 +1,6 @@
 # mini-jarvis
 
-An **advisory-only** AI agent system for a fictional Sydney plumbing business. It is a portfolio demo of one pattern:
+An **advisory-only**, human-in-the-loop AI agent system for small-business operations. It is not tied to one industry: describe your business and currency in config, and the agents adapt their prompts. The bundled demo data models a small Sydney plumbing business. The pattern:
 
 > agent reads business data → an AI model (Claude or Gemini) produces a recommendation → **a human must approve it** → everything is logged.
 
@@ -54,6 +54,8 @@ Everything comes from environment variables (see `.env.example`). **Never commit
 
 | Variable | Default | Notes |
 |---|---|---|
+| `BUSINESS_DESCRIPTION` | `a small trades business` | Inserted into agent prompts, e.g. `a boutique accounting firm in Melbourne` |
+| `BUSINESS_CURRENCY` | `AUD` | ISO code used in prompts and in the money-figure check |
 | `ANTHROPIC_API_KEY` | _(empty)_ | Claude is unavailable without it |
 | `ANTHROPIC_MODEL` | `claude-sonnet-5-5` | **Check the [Anthropic models docs](https://docs.anthropic.com/en/docs/about-claude/models) and set a current model** |
 | `GEMINI_API_KEY` | _(empty)_ | Gemini is unavailable without it |
@@ -189,7 +191,7 @@ All errors share one JSON shape: `{timestamp, status, error, message, path, agen
 
 ## Limitations
 
-- **Demo data only.** The seed migration creates 40 invoices and 30 expenses (fake, in AUD) dated relative to when the migration first runs. The most recent 30 days are deliberately weak (income ≈ $5k vs. expenses ≈ $40k, 8 overdue invoices). If the database lives for months, the data ages too. Recreate it with `docker compose down -v`.
+- **Demo data only.** The seed migration creates 40 invoices and 30 expenses for a fictional plumbing business (fake, in AUD). Replace `V2__seed_demo_data.sql` (or load your own data) for another industry. The data is dated relative to when the migration first runs. The most recent 30 days are deliberately weak (income ≈ $5k vs. expenses ≈ $40k, 8 overdue invoices). If the database lives for months, the data ages too. Recreate it with `docker compose down -v`.
 - **Single agent.** Only `cash-flow` exists. The framework is designed for many more.
 - **No real integrations yet.** There is no Xero, FieldPulse or bank feed. Agents read local tables only.
 - **Gemini free-tier limits.** The free tier has small per-minute and per-day quotas. A `429` / `RATE_LIMITED` from Gemini is a quota issue, not a bug. Wait, set `AI_FALLBACK_PROVIDER=claude`, or use a paid tier.

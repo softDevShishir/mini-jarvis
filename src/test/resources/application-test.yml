@@ -8,6 +8,9 @@ spring:
 
 jarvis:
   max-agent-runs-per-day: 1000
+  business:
+    description: Acme Test Trades Pty Ltd
+    currency: AUD
   ai:
     provider: claude
     fallback-provider: ""

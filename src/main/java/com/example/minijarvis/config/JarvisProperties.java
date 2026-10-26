@@ -13,7 +13,8 @@ public record JarvisProperties(
         Ai ai,
         Security security,
         Scheduler scheduler,
-        Telegram telegram) {
+        Telegram telegram,
+        Business business) {
 
     public record Ai(
             String provider,
@@ -45,6 +46,10 @@ public record JarvisProperties(
     }
 
     public record Scheduler(boolean enabled, String cron) {
+    }
+
+    /** Describes the business to the agents, so the same agents work for any industry. */
+    public record Business(String description, String currency) {
     }
 
     public record Telegram(String botToken, String chatId, String apiBaseUrl) {
