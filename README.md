@@ -62,6 +62,7 @@ Everything comes from environment variables (see `.env.example`). **Never commit
 | `AI_FALLBACK_PROVIDER` | _(empty)_ | Used only after the primary fails twice with 429 or a temporary error |
 | `DB_URL` | `jdbc:postgresql://localhost:5432/minijarvis` | Overridden to the `postgres` service in docker compose |
 | `DB_USERNAME` / `DB_PASSWORD` | `minijarvis` / `minijarvis` | |
+| `POSTGRES_HOST_PORT` | `5433` | Host port for the compose Postgres (localhost only), so it won't clash with a local Postgres on 5432 |
 | `ADMIN_USERNAME` | `admin` | The only account that can log in |
 | `ADMIN_PASSWORD` | _(empty)_ | Login is disabled until set |
 | `JWT_SECRET` | _(none)_ | **Required, at least 32 bytes.** The app refuses to start otherwise. `openssl rand -base64 48` |
@@ -85,7 +86,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-Postgres starts first, and the app waits for its healthcheck. Flyway creates the schema and loads the demo data. The API listens on `http://localhost:8080`.
+Postgres starts first, and the app waits for its healthcheck. To inspect the database from the host: `psql -h localhost -p 5433 -U minijarvis minijarvis`. Flyway creates the schema and loads the demo data. The API listens on `http://localhost:8080`.
 
 Run the tests (no Postgres or API keys needed; they use in-memory H2 and mocked providers):
 
