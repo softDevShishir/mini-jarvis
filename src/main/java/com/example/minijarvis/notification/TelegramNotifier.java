@@ -63,7 +63,7 @@ public class TelegramNotifier implements RecommendationNotifier {
 
     static String buildMessage(AgentRun run, List<Recommendation> recommendations) {
         StringBuilder sb = new StringBuilder();
-        sb.append("mini-jarvis: ").append(recommendations.size()).append(" new recommendation(s) from ")
+        sb.append("mini-jarvis-ai-agent: ").append(recommendations.size()).append(" new recommendation(s) from ")
                 .append(run.getAgentName()).append(" awaiting your approval.\n");
         if (run.getRiskLevel() != null) {
             sb.append("Risk: ").append(run.getRiskLevel()).append('\n');

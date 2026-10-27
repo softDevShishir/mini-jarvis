@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>com.example</groupId>
-    <artifactId>mini-jarvis</artifactId>
+    <artifactId>mini-jarvis-ai-agent</artifactId>
     <version>0.1.0</version>
-    <name>mini-jarvis</name>
+    <name>mini-jarvis-ai-agent</name>
     <description>Human-in-the-loop, advisory-only AI agents for small-business operations</description>
 
     <properties>

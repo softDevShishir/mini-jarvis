@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-mini-jarvis is a Spring Boot 3.5 / Java 21 app where **advisory-only** AI agents read business data and ask an LLM (Claude, Gemini or OpenAI) for recommendations. A human approves or rejects each recommendation through the API, and every step is written to `audit_log`. The project is industry-neutral: the business is described in config (`BUSINESS_DESCRIPTION`, `BUSINESS_CURRENCY`). The seeded demo data is a fictional plumbing business.
+mini-jarvis-ai-agent is a Spring Boot 3.5 / Java 21 app where **advisory-only** AI agents read business data and ask an LLM (Claude, Gemini or OpenAI) for recommendations. A human approves or rejects each recommendation through the API, and every step is written to `audit_log`. The project is industry-neutral: the business is described in config (`BUSINESS_DESCRIPTION`, `BUSINESS_CURRENCY`). The seeded demo data is a fictional plumbing business.
 
 ## Commands
 
@@ -12,7 +12,7 @@ mini-jarvis is a Spring Boot 3.5 / Java 21 app where **advisory-only** AI agents
 mvn test                                         # full suite: H2 + mocked providers, no Postgres or API keys needed
 mvn test -Dtest=AiRouterTest                     # one test class
 mvn test -Dtest=AiRouterTest#badRequestIsNotRetried   # one test method
-mvn -q -B package -DskipTests                    # build target/mini-jarvis-0.1.0.jar
+mvn -q -B package -DskipTests                    # build target/mini-jarvis-ai-agent-0.1.0.jar
 docker compose up --build                        # app + Postgres; needs a .env (copy .env.example)
 ```
 
@@ -32,10 +32,11 @@ Approving or rejecting (`RecommendationService`) only changes the status and wri
 
 Security: one admin account from `ADMIN_USERNAME`/`ADMIN_PASSWORD`. `POST /api/auth/login` is the only endpoint that issues tokens; everything else needs a JWT (`JwtAuthenticationFilter`). 401s come from the entry point in `SecurityConfig`; every other error uses the `ApiError` shape from `GlobalExceptionHandler`.
 
-Frontend: the React UI is a separate repo ([mini-jarvis-ui](https://github.com/softdevshishir/mini-jarvis-ui)) whose `src/api/types.ts` mirrors `web/Dtos.java`, `ApiError` and `TokenResponse`, so changing an API shape or path breaks the UI too. In development it reaches the API through the Vite proxy (same origin). CORS is only for a UI on another domain: `CORS_ALLOWED_ORIGINS` (exact origins, `/api/**` only, `GET`/`POST`, no credentials). It is off when empty, and `SecurityConfig.corsSource` refuses wildcards or paths at startup. `CorsTest` covers it.
+Frontend: the React UI is a separate repo ([mini-jarvis-ai-agent-ui](https://github.com/softdevshishir/mini-jarvis-ai-agent-ui)) whose `src/api/types.ts` mirrors `web/Dtos.java`, `ApiError` and `TokenResponse`, so changing an API shape or path breaks the UI too. In development it reaches the API through the Vite proxy (same origin). CORS is only for a UI on another domain: `CORS_ALLOWED_ORIGINS` (exact origins, `/api/**` only, `GET`/`POST`, no credentials). It is off when empty, and `SecurityConfig.corsSource` refuses wildcards or paths at startup. `CorsTest` covers it.
 
 ## Conventions that aren't obvious
 
+- **The old `minijarvis` / `mini-jarvis` names are kept on purpose** in the Java package (`com.example.minijarvis`), the database name and credential defaults, and the JWT issuer. The project and artifact are `mini-jarvis-ai-agent`, but renaming those would break existing databases, `.env` files and issued tokens.
 - **Model names live only in config** (`application.yml`, `.env.example`), never in Java.
 - **All config is in `JarvisProperties`** (a record bound to `jarvis.*`). Records that hold secrets override `toString()` to mask them, and `SecretLeakTest` checks that keys never appear in responses or logs. Adding a field to `JarvisProperties` (or a nested record) means updating `TestFixtures.properties(...)` and the tests that build it with the canonical constructor (`JwtServiceTest`, `TelegramNotifierTest`).
 - **Schema changes go through Flyway** (`src/main/resources/db/migration`); Hibernate `ddl-auto` is `none`. Migrations must run on both Postgres and H2 (`MODE=PostgreSQL`, used by tests). The seed data uses `CURRENT_DATE - INTERVAL 'n' DAY`, so dates are relative to when the migration first runs.

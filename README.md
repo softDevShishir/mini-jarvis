@@ -1,4 +1,4 @@
-# mini-jarvis
+# mini-jarvis-ai-agent
 
 An **advisory-only**, human-in-the-loop AI agent system for small-business operations. It is not tied to one industry: describe your business and currency in config, and the agents adapt their prompts. The bundled demo data models a small Sydney plumbing business. The pattern:
 
@@ -110,7 +110,7 @@ mvn test
 
 ## Web UI
 
-A React frontend lives in a separate repository: [mini-jarvis-ui](https://github.com/softdevshishir/mini-jarvis-ui). It covers login, running agents, approving or rejecting recommendations, and the audit log.
+A React frontend lives in a separate repository: [mini-jarvis-ai-agent-ui](https://github.com/softdevshishir/mini-jarvis-ai-agent-ui). It covers login, running agents, approving or rejecting recommendations, and the audit log.
 
 - **Development:** run this backend on `http://localhost:8080`, then `npm install && npm run dev` in the UI repo. Vite forwards `/api` to the backend, so no CORS setting is needed.
 - **Production, same domain (recommended):** put a reverse proxy in front that sends `/api/*` to this app and everything else to the UI's `dist/`. No CORS setting is needed.

@@ -11,7 +11,7 @@ import com.example.minijarvis.audit.AuditService;
 
 /**
  * Human decisions on recommendations. Approving or rejecting ONLY records the decision and an audit row.
- * Nothing is executed, and no external service is called: mini-jarvis is advisory-only.
+ * Nothing is executed, and no external service is called: mini-jarvis-ai-agent is advisory-only.
  */
 @Service
 public class RecommendationService {

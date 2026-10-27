@@ -1,6 +1,6 @@
-# mini-jarvis: AI advisors for your business
+# mini-jarvis-ai-agent: AI advisors for your business
 
-Running a small business leaves little time to read reports. mini-jarvis gives you AI "advisors", called agents. Each agent watches one part of your business and tells you what needs attention, as a short list of suggestions instead of a pile of numbers.
+Running a small business leaves little time to read reports. mini-jarvis-ai-agent gives you AI "advisors", called agents. Each agent watches one part of your business and tells you what needs attention, as a short list of suggestions instead of a pile of numbers.
 
 ## You stay in control
 
@@ -68,9 +68,9 @@ Looks at what the other agents found. Gives a weekly summary of the top 3 priori
 
 ## How it works with your tools
 
-Today, mini-jarvis runs on demo data only. It is **not yet connected** to any accounting software, customer system (CRM), job-management software, bank or WhatsApp.
+Today, mini-jarvis-ai-agent runs on demo data only. It is **not yet connected** to any accounting software, customer system (CRM), job-management software, bank or WhatsApp.
 
-Connecting your own software needs your permission and access. It is done step by step, starting **read-only**: mini-jarvis can look but cannot change anything.
+Connecting your own software needs your permission and access. It is done step by step, starting **read-only**: mini-jarvis-ai-agent can look but cannot change anything.
 
 The first step is a short paid review of what data you have and where it lives. Cost: [price]. Length: [time].
 
@@ -78,7 +78,7 @@ The first step is a short paid review of what data you have and where it lives. 
 
 - The data needed for an answer is sent to the AI provider chosen for you.
 - You can choose which provider is used.
-- mini-jarvis does not use your data for anything else.
+- mini-jarvis-ai-agent does not use your data for anything else.
 - Each provider has its own terms. Please read them.
 - I recommend leaving out customer personal details, such as phone numbers, unless an agent needs them.
 

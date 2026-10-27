@@ -21,7 +21,7 @@ import com.example.minijarvis.ai.ClaudeProvider;
 import com.example.minijarvis.ai.GeminiProvider;
 import com.example.minijarvis.ai.OpenAiProvider;
 
-/** CORS for a separately hosted UI (mini-jarvis-ui): only the configured exact origin is allowed. */
+/** CORS for a separately hosted UI (mini-jarvis-ai-agent-ui): only the configured exact origin is allowed. */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
